@@ -15,6 +15,13 @@
     ></side-item>
 
     <side-item
+      @iconClick="$router.push('/blind')"
+      :isActive="isActive('/blind')"
+      :iconName="'mdi-sort-variant-lock'"
+      :tooltipText="'익명 게시판'"
+    ></side-item>
+
+    <side-item
       @iconClick="$router.push('/calendar')"
       :isActive="isActive('/calendar')"
       :iconName="'mdi-calendar'"

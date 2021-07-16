@@ -14,6 +14,11 @@ const routes = [
     component: require("@/views/RestaurantReview").default,
   },
   {
+    path: "/blind",
+    name: "blind",
+    component: require("@/views/Blind").default,
+  },
+  {
     path: "/calendar",
     name: "calendar",
     component: require("@/views/Calendar").default,
