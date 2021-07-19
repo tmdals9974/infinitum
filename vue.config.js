@@ -5,15 +5,15 @@ module.exports = {
 };
 
 module.exports = {
-  css: {
-    loaderOptions: {
-      scss: {
-        additionalData: `
-					@import "~@/assets/scss/_variables.scss";
-        		`,
-      },
-    },
-  },
+  // css: {
+  //   loaderOptions: {
+  //     scss: {
+  //       additionalData: `
+  // 				@import "~@/scss/variables.scss";
+  //       		`,
+  //     },
+  //   },
+  // },
 
   devServer: {
     overlay: {

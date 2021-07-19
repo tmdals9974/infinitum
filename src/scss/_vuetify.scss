@@ -1,0 +1,19 @@
+.v-data-table-header {
+    background: $color-gray-2;
+    color: $color-gray-3;
+}
+
+.pagination .v-pagination__item,
+.pagination .v-pagination__navigation {
+  outline: none;
+}
+
+.pagination .v-pagination__item--active {
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.pagination .v-pagination__item:not(.v-pagination__item--active), .pagination .v-pagination__navigation {
+    box-shadow: none;
+    border: 1px solid #dee2e6;
+    color: #8898aa;
+}
