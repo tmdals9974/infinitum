@@ -17,3 +17,7 @@
     border: 1px solid #dee2e6;
     color: #8898aa;
 }
+
+.v-text-field--filled:not(.v-text-field--single-line) input {
+  margin-top: 0px;
+}

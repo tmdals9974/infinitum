@@ -4,6 +4,7 @@
       <v-toolbar-title>오늘 뭐먹지?</v-toolbar-title>
     </v-toolbar>
 
+    <!-- table -->
     <v-data-table
       class="mt-5"
       :headers="headers"
@@ -21,6 +22,7 @@
       :search="search"
       :custom-filter="filterRestaurants"
     >
+      <!-- table header -->
       <template v-slot:top>
         <div class="d-flex align-baseline">
           <v-text-field
@@ -31,13 +33,75 @@
             prepend-inner-icon="mdi-magnify"
             class="mx-4"
           ></v-text-field>
+
           <v-spacer> </v-spacer>
           <v-spacer> </v-spacer>
+
+          <!-- modal button -->
           <div class="ma-2" style="width: 100px; height: 100%">
-            <v-btn color="primary" block> 추가 </v-btn>
+            <v-dialog v-model="resDialog" max-width="600px">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn color="primary" block v-bind="attrs" v-on="on">
+                  추가
+                </v-btn>
+              </template>
+
+              <v-card>
+                <v-card-title class="pa-5">
+                  <span class="text-h5">식당 등록</span>
+                </v-card-title>
+                <v-divider></v-divider>
+
+                <v-card-text class="my-5 py-0">
+                  <v-container class="px-0">
+                    <v-row dense class="mb-5">
+                      <v-col class="mx-3">
+                        <v-text-field
+                          label="구분"
+                          outlined
+                          hide-details
+                          v-model="newRestaurant.type"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col class="mx-3">
+                        <v-text-field
+                          label="상호명"
+                          outlined
+                          hide-details
+                          v-model="newRestaurant.name"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row dense>
+                      <v-col class="mx-3">
+                        <v-text-field
+                          label="위치"
+                          outlined
+                          hide-details
+                          v-model="newRestaurant.position"
+                          @keydown.enter="createRestaurant()"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+
+                <v-card-actions class="pb-5">
+                  <v-spacer></v-spacer>
+                  <v-btn color="red darken-1" text @click="resDialog = false">
+                    Close
+                  </v-btn>
+                  <v-btn color="blue darken-1" text @click="createRestaurant()">
+                    Save
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </div>
         </div>
       </template>
+
+      <!-- expand component -->
       <template v-slot:expanded-item="{ headers, item }">
         <td
           :colspan="headers.length"
@@ -48,7 +112,10 @@
           style="height: auto"
         >
           <v-expand-transition>
-            <div v-show="transitioned[getItemId(item)]">
+            <div
+              v-show="transitioned[getItemId(item)]"
+              v-if="item.reviews && item.reviews.length > 0"
+            >
               <v-row class="px-5 py-3 sub-table-tr" dense>
                 <v-col cols="2">작성자</v-col>
                 <v-col cols="2">메뉴</v-col>
@@ -84,10 +151,32 @@
                 </v-col>
               </v-row>
             </div>
+            <div
+              v-show="transitioned[getItemId(item)]"
+              v-else
+              class="subtitle-1 px-5"
+            >
+              <v-icon class="py-3">mdi-subdirectory-arrow-right</v-icon>
+              등록된 리뷰가 없습니다.
+            </div>
           </v-expand-transition>
         </td>
       </template>
+
+      <!-- actions -->
+      <template #[`item.actions`]="{ item }">
+        <v-icon
+          small
+          class="mr-2"
+          style="cursor: pointer"
+          @click.stop="settingReview(item)"
+        >
+          mdi-pencil
+        </v-icon>
+      </template>
     </v-data-table>
+
+    <!-- pagination -->
     <div class="text-center pt-3 pr-3 card-padding d-flex justify-end">
       <v-pagination
         v-model="page"
@@ -97,6 +186,82 @@
         class="pagination"
       ></v-pagination>
     </div>
+
+    <!-- review modal -->
+    <v-dialog v-model="revDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="pa-5">
+          <span class="text-h5">리뷰 등록</span>
+        </v-card-title>
+        <v-divider></v-divider>
+
+        <v-card-text class="my-5 py-0">
+          <v-container class="px-0">
+            <v-row dense class="mb-5">
+              <v-col class="mx-3">
+                <v-text-field
+                  class="my-0"
+                  label="작성자"
+                  outlined
+                  filled
+                  disabled
+                  hide-details
+                  v-model="newReview.writer"
+                ></v-text-field>
+              </v-col>
+              <v-col class="mx-3">
+                <v-text-field
+                  label="가게"
+                  outlined
+                  filled
+                  disabled
+                  hide-details
+                  v-model="newReview.resName"
+                ></v-text-field>
+              </v-col>
+              <v-col class="mx-3">
+                <v-text-field
+                  label="별점"
+                  outlined
+                  hide-details
+                  v-model="newReview.rating"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row dense class="mb-5">
+              <v-col class="mx-3">
+                <v-text-field
+                  label="메뉴"
+                  outlined
+                  hide-details
+                  v-model="newReview.menu"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row dense>
+              <v-col class="mx-3">
+                <v-textarea
+                  label="평가"
+                  outlined
+                  hide-details
+                  v-model="newReview.review"
+                ></v-textarea>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions class="pb-5">
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="revDialog = false">
+            Close
+          </v-btn>
+          <v-btn color="blue darken-1" text @click="newRestaurant()">
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </main>
 </template>
 
@@ -116,8 +281,24 @@ export default {
         { text: "구분", value: "type" },
         { text: "위치", value: "position" },
         { text: "상호명", value: "name" },
+        { text: "", value: "actions", sortable: false, width: "50px" },
       ],
       restaurants: [],
+      resDialog: false,
+      revDialog: false,
+      newRestaurant: {
+        type: "",
+        name: "",
+        position: "",
+      },
+      newReview: {
+        writer: "이승민",
+        rating: "",
+        menu: "",
+        review: "",
+        resId: "",
+        resName: "",
+      },
     };
   },
   created: function () {
@@ -138,6 +319,38 @@ export default {
         default:
           return "black";
       }
+    },
+    createRestaurant() {
+      if (!Object.values(this.newRestaurant).every((v) => v))
+        return alert("모든 값을 입력해주세요.");
+
+      this.$http
+        .post(`${this.$apiUrl}/createRestaurant`, this.newRestaurant)
+        .then((res) => {
+          if (res.data[0].statusCode === this.$successCode) {
+            this.newRestaurant.id = res.data[1].insertId;
+            this.restaurants.push(this.newRestaurant);
+            this.resDialog = false;
+
+            this.newRestaurantClear();
+          } else {
+            alert(`${res.data[0].message}`);
+          }
+        })
+        .catch((err) => {
+          alert(`오류 발생\r\n${err}`);
+        });
+    },
+    newRestaurantClear() {
+      this.newRestaurant.type = "";
+      this.newRestaurant.position = "";
+      this.newRestaurant.name = "";
+      this.newRestaurant.id = "";
+    },
+    settingReview(item) {
+      this.newReview.resId = item.id;
+      this.newReview.resName = item.name;
+      this.revDialog = true;
     },
     getShortName(name) {
       return name.substring(name.length - 2);
