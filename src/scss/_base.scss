@@ -3,7 +3,7 @@ body {
     margin: 0;
     width: 100%;
     height: 100%;
-    font-family: 'EliceDigitalBaeum';
+    font-family: $body-font-family;
 }
 
 @font-face {
@@ -18,4 +18,12 @@ body {
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/EliceDigitalBaeum_Bold.woff') format('woff');
     font-weight: bold;
     font-style: normal;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.Vue-Toastification__toast-body {
+    font-family: $body-font-family;
 }

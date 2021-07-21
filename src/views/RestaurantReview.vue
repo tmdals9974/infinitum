@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <div>
     <v-toolbar flat color="white">
       <v-toolbar-title>오늘 뭐먹지?</v-toolbar-title>
     </v-toolbar>
@@ -276,7 +276,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </main>
+  </div>
 </template>
 
 <script>
@@ -318,7 +318,7 @@ export default {
     };
   },
   created: function () {
-    this.$http.get(`${this.$apiUrl}/getRestaurants`).then((res) => {
+    this.$http.get(`${this.$apiUrl}/restaurant`).then((res) => {
       if (res.data[0].statusCode === this.$successCode) {
         this.restaurants = res.data[1];
         this.loading = false;
@@ -344,7 +344,7 @@ export default {
         );
 
       this.$http
-        .post(`${this.$apiUrl}/createRestaurant`, this.newRestaurant)
+        .post(`${this.$apiUrl}/restaurant`, this.newRestaurant)
         .then((res) => {
           if (res.data[0].statusCode === this.$successCode) {
             this.newRestaurant.ratingAverage = 0;
@@ -384,7 +384,7 @@ export default {
         );
 
       this.$http
-        .post(`${this.$apiUrl}/createReview`, this.newReview)
+        .post(`${this.$apiUrl}/review`, this.newReview)
         .then((res) => {
           if (res.data[0].statusCode === this.$successCode) {
             this.newReview.id = res.data[1].insertId;
@@ -409,9 +409,6 @@ export default {
                 totalRating / this.restaurants[index].reviews.length + "e+2"
               ) + "e-2"
             );
-
-            console.log(totalRating);
-            console.log(this.restaurants[index].reviews.length);
 
             //모달 닫기
             this.revDialog = false;

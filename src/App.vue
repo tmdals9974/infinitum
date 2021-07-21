@@ -4,7 +4,7 @@
       <title-bar />
       <side-bar />
       <v-main>
-        <v-container fluid>
+        <v-container fluid class="h-full">
           <router-view></router-view>
         </v-container>
       </v-main>

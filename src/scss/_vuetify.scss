@@ -14,10 +14,14 @@
 
 .pagination .v-pagination__item:not(.v-pagination__item--active), .pagination .v-pagination__navigation {
     box-shadow: none;
-    border: 1px solid #dee2e6;
+    border: 1px solid $color-gray-1;
     color: #8898aa;
 }
 
 .v-text-field--filled:not(.v-text-field--single-line) input {
   margin-top: 0px;
+}
+
+.v-color-picker__swatches {
+  border-top: 1px solid $color-gray-4;
 }
