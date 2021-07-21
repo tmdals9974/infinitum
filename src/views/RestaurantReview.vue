@@ -119,8 +119,9 @@
               <v-row class="px-5 py-3 sub-table-tr" dense>
                 <v-col cols="2">작성자</v-col>
                 <v-col cols="2">메뉴</v-col>
+                <v-col cols="1">가격</v-col>
                 <v-col cols="1">별점</v-col>
-                <v-col cols="7">평가</v-col>
+                <v-col cols="6">평가</v-col>
               </v-row>
               <v-row
                 class="px-5 py-3 sub-table-tr"
@@ -144,9 +145,12 @@
                   {{ review.menu }}
                 </v-col>
                 <v-col class="align-self-center" cols="1">
+                  {{ $numberWithComma(review.price) }}
+                </v-col>
+                <v-col class="align-self-center" cols="1">
                   {{ review.rating }}
                 </v-col>
-                <v-col class="align-self-center" cols="7">
+                <v-col class="align-self-center" cols="6">
                   {{ review.reviews }}
                 </v-col>
               </v-row>
@@ -216,7 +220,7 @@
                   filled
                   disabled
                   hide-details
-                  v-model="newReview.resName"
+                  v-model="newReview.restaurants_name"
                 ></v-text-field>
               </v-col>
               <v-col class="mx-3">
@@ -225,6 +229,7 @@
                   outlined
                   hide-details
                   v-model="newReview.rating"
+                  placeholder="1~5 숫자만 입력"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -237,6 +242,15 @@
                   v-model="newReview.menu"
                 ></v-text-field>
               </v-col>
+              <v-col class="mx-3">
+                <v-text-field
+                  label="가격"
+                  outlined
+                  hide-details
+                  placeholder="숫자만 입력"
+                  v-model="newReview.price"
+                ></v-text-field>
+              </v-col>
             </v-row>
             <v-row dense>
               <v-col class="mx-3">
@@ -244,7 +258,7 @@
                   label="평가"
                   outlined
                   hide-details
-                  v-model="newReview.review"
+                  v-model="newReview.reviews"
                 ></v-textarea>
               </v-col>
             </v-row>
@@ -256,7 +270,7 @@
           <v-btn color="red darken-1" text @click="revDialog = false">
             Close
           </v-btn>
-          <v-btn color="blue darken-1" text @click="newRestaurant()">
+          <v-btn color="blue darken-1" text @click="createReview()">
             Save
           </v-btn>
         </v-card-actions>
@@ -281,6 +295,7 @@ export default {
         { text: "구분", value: "type" },
         { text: "위치", value: "position" },
         { text: "상호명", value: "name" },
+        { text: "평점", value: "ratingAverage" },
         { text: "", value: "actions", sortable: false, width: "50px" },
       ],
       restaurants: [],
@@ -293,11 +308,12 @@ export default {
       },
       newReview: {
         writer: "이승민",
-        rating: "",
+        rating: undefined,
         menu: "",
-        review: "",
-        resId: "",
-        resName: "",
+        price: undefined,
+        reviews: "",
+        restaurants_id: "",
+        restaurants_name: "",
       },
     };
   },
@@ -322,35 +338,106 @@ export default {
     },
     createRestaurant() {
       if (!Object.values(this.newRestaurant).every((v) => v))
-        return alert("모든 값을 입력해주세요.");
+        return this.$toast.warning(
+          "모든 값을 입력해주세요.",
+          this.$defaultToastOption
+        );
 
       this.$http
         .post(`${this.$apiUrl}/createRestaurant`, this.newRestaurant)
         .then((res) => {
           if (res.data[0].statusCode === this.$successCode) {
+            this.newRestaurant.ratingAverage = 0;
             this.newRestaurant.id = res.data[1].insertId;
-            this.restaurants.push(this.newRestaurant);
+            this.restaurants.push({ ...this.newRestaurant });
             this.resDialog = false;
 
             this.newRestaurantClear();
           } else {
-            alert(`${res.data[0].message}`);
+            this.$toast.error(
+              `${res.data[0].message}`,
+              this.$defaultToastOption
+            );
           }
         })
         .catch((err) => {
-          alert(`오류 발생\r\n${err}`);
+          this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
         });
     },
     newRestaurantClear() {
       this.newRestaurant.type = "";
       this.newRestaurant.position = "";
       this.newRestaurant.name = "";
-      this.newRestaurant.id = "";
+      delete this.newRestaurant.id;
+      delete this.newRestaurant.ratingAverage;
     },
     settingReview(item) {
-      this.newReview.resId = item.id;
-      this.newReview.resName = item.name;
+      this.newReview.restaurants_id = item.id;
+      this.newReview.restaurants_name = item.name;
       this.revDialog = true;
+    },
+    createReview() {
+      if (!Object.values(this.newReview).every((v) => v))
+        return this.$toast.warning(
+          "모든 값을 입력해주세요.",
+          this.$defaultToastOption
+        );
+
+      this.$http
+        .post(`${this.$apiUrl}/createReview`, this.newReview)
+        .then((res) => {
+          if (res.data[0].statusCode === this.$successCode) {
+            this.newReview.id = res.data[1].insertId;
+
+            const index = this.restaurants.findIndex(
+              (r) => r.id === this.newReview.restaurants_id
+            );
+            if (index === -1) throw "리뷰 작성 중 오류가 발생하였습니다.";
+
+            //리뷰등록
+            if (!this.restaurants[index].reviews)
+              this.restaurants[index].reviews = [];
+            this.restaurants[index].reviews.push({ ...this.newReview });
+
+            //평점 재계산
+            let totalRating = 0;
+            this.restaurants[index].reviews.forEach(
+              (r) => (totalRating += parseInt(r.rating))
+            );
+            this.restaurants[index].ratingAverage = +(
+              Math.round(
+                totalRating / this.restaurants[index].reviews.length + "e+2"
+              ) + "e-2"
+            );
+
+            console.log(totalRating);
+            console.log(this.restaurants[index].reviews.length);
+
+            //모달 닫기
+            this.revDialog = false;
+
+            //데이터 초기화
+            this.newReviewClear();
+          } else {
+            this.$toast.error(
+              `${res.data[0].message}`,
+              this.$defaultToastOption
+            );
+          }
+        })
+        .catch((err) => {
+          this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
+        });
+    },
+    newReviewClear() {
+      this.newReview.writer = "이승민";
+      this.newReview.rating = undefined;
+      this.newReview.menu = "";
+      this.newReview.price = undefined;
+      this.newReview.reviews = "";
+      this.newReview.restaurants_id = "";
+      this.newReview.restaurants_name = "";
+      delete this.newReview.id;
     },
     getShortName(name) {
       return name.substring(name.length - 2);
