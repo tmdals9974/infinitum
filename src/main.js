@@ -13,10 +13,19 @@ import "vue-toastification/dist/index.css";
 Vue.config.productionTip = false;
 
 Vue.prototype.$http = axios;
-Vue.prototype.$apiUrl = "http://localhost:5000";
+Vue.prototype.$apiUrl =
+  process.env.NODE_ENV !== "production" ? "http://localhost:5000" : "/api";
 Vue.prototype.$successCode = 200;
 Vue.prototype.$numberWithComma = function (x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+Vue.prototype.$nameToColor = function (users, name) {
+  const index = users.findIndex((user) => user.name === name);
+  if (index === -1) return { back_color: "#ffffff", font_color: "#000000" };
+  return {
+    back_color: users[index].back_color,
+    font_color: users[index].font_color,
+  };
 };
 Vue.prototype.$defaultToastOption = {
   position: "top-right",

@@ -61,7 +61,7 @@ import SideItem from "./SideItem.vue";
 export default {
   data: function () {
     return {
-      activeMenu: "/restaurantReview",
+      activeMenu: this.$router.currentRoute.path,
     };
   },
   components: { SideItem },
