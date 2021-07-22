@@ -46,6 +46,7 @@
 
 <script>
 export default {
+  name: "user",
   data() {
     return {
       name: "홍길동",
@@ -83,6 +84,8 @@ export default {
         .then((res) => {
           if (res.data[0].statusCode === this.$successCode) {
             localStorage.setItem("infi_user", JSON.stringify(params));
+            this.$store.commit("setUserName", params.name);
+            this.$store.commit("addUser", params);
 
             return this.$toast.success(
               "성공적으로 저장하였습니다.",
@@ -102,21 +105,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.big-avatar {
-  font-size: 40px;
-}
-
-.color-picker-box {
-  border: solid 1px $color-gray-4;
-}
-
-.black-font {
-  color: black;
-}
-
-.white-font {
-  color: white;
-}
-</style>

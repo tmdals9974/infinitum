@@ -133,12 +133,20 @@
                   <v-icon>mdi-subdirectory-arrow-right</v-icon>
                   <v-avatar
                     class="ml-2"
-                    :color="nameToColor(review.writer)"
+                    :color="
+                      $nameToColor($store.state.users, review.writer).back_color
+                    "
                     size="34"
                   >
-                    <span class="white--text">{{
-                      getShortName(review.writer)
-                    }}</span>
+                    <span
+                      :class="[
+                        $nameToColor($store.state.users, review.writer)
+                          .font_color === '#000000'
+                          ? 'black-font'
+                          : 'white-font',
+                      ]"
+                      >{{ getShortName(review.writer) }}</span
+                    >
                   </v-avatar>
                 </v-col>
                 <v-col class="align-self-center" cols="2">
@@ -281,6 +289,7 @@
 
 <script>
 export default {
+  name: "restaurant-review",
   data() {
     return {
       search: "",
@@ -301,40 +310,23 @@ export default {
       restaurants: [],
       resDialog: false,
       revDialog: false,
-      newRestaurant: {
-        type: "",
-        name: "",
-        position: "",
-      },
-      newReview: {
-        writer: "이승민",
-        rating: undefined,
-        menu: "",
-        price: undefined,
-        reviews: "",
-        restaurants_id: "",
-        restaurants_name: "",
-      },
+      newRestaurant: {},
+      newReview: {},
     };
   },
   created: function () {
-    this.$http.get(`${this.$apiUrl}/restaurant`).then((res) => {
-      if (res.data[0].statusCode === this.$successCode) {
-        this.restaurants = res.data[1];
-        this.loading = false;
-      }
-    });
+    this.getRestaurants();
+    this.resetNewRestaurant();
+    this.resetNewReview();
   },
   methods: {
-    nameToColor(name) {
-      switch (name) {
-        case "이용정":
-          return "red";
-        case "이승민":
-          return "yellow";
-        default:
-          return "black";
-      }
+    getRestaurants() {
+      this.$http.get(`${this.$apiUrl}/restaurant`).then((res) => {
+        if (res.data[0].statusCode === this.$successCode) {
+          this.restaurants = res.data[1];
+          this.loading = false;
+        }
+      });
     },
     createRestaurant() {
       if (!Object.values(this.newRestaurant).every((v) => v))
@@ -352,7 +344,7 @@ export default {
             this.restaurants.push({ ...this.newRestaurant });
             this.resDialog = false;
 
-            this.newRestaurantClear();
+            this.resetNewRestaurant();
           } else {
             this.$toast.error(
               `${res.data[0].message}`,
@@ -364,12 +356,12 @@ export default {
           this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
         });
     },
-    newRestaurantClear() {
-      this.newRestaurant.type = "";
-      this.newRestaurant.position = "";
-      this.newRestaurant.name = "";
-      delete this.newRestaurant.id;
-      delete this.newRestaurant.ratingAverage;
+    resetNewRestaurant() {
+      this.newRestaurant = {
+        type: "",
+        name: "",
+        position: "",
+      };
     },
     settingReview(item) {
       this.newReview.restaurants_id = item.id;
@@ -414,7 +406,7 @@ export default {
             this.revDialog = false;
 
             //데이터 초기화
-            this.newReviewClear();
+            this.resetNewReview();
           } else {
             this.$toast.error(
               `${res.data[0].message}`,
@@ -426,15 +418,16 @@ export default {
           this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
         });
     },
-    newReviewClear() {
-      this.newReview.writer = "이승민";
-      this.newReview.rating = undefined;
-      this.newReview.menu = "";
-      this.newReview.price = undefined;
-      this.newReview.reviews = "";
-      this.newReview.restaurants_id = "";
-      this.newReview.restaurants_name = "";
-      delete this.newReview.id;
+    resetNewReview() {
+      this.newReview = {
+        writer: this.$store.state.userName,
+        menu: "",
+        reviews: "",
+        restaurants_id: "",
+        restaurants_name: "",
+        rating: undefined,
+        price: undefined,
+      };
     },
     getShortName(name) {
       return name.substring(name.length - 2);
@@ -474,9 +467,9 @@ export default {
     closeExpand(item) {
       const id = this.getItemId(item);
       this.$set(this.transitioned, id, false);
-      this.closeTimeouts[id] = setTimeout(() =>
-        this.$refs.vDataTable.expand(item, false)
-      );
+      // this.closeTimeouts[id] = setTimeout(() =>
+      //   this.$refs.vDataTable.expand(item, false)
+      // );
     },
   },
 };
