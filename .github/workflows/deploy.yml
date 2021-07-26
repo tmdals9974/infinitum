@@ -31,7 +31,7 @@ jobs:
           timeout: 30s
           command_timeout: 10m
           script: |
-            whoami
+            lpwd
 
       # test1
       - name: test1
