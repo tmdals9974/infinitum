@@ -19,7 +19,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-        
+              
       # ssh
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
@@ -32,9 +32,11 @@ jobs:
           command_timeout: 10m
           script: |
             whoami
-            ls -al
-            pwd
 
       # test1
       - name: test1
         run: ls -al
+
+      # get public ip
+      - name: get public ip
+        run: curl ipv4.icanhazip.com
