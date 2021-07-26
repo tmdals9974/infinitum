@@ -41,10 +41,9 @@ jobs:
       - name: deploy file
         uses: wlixcc/SFTP-Deploy-Action@v1.0
         with:
-          username: ${{ secrets.USERNAME }}
-          server: ${{ secrets.HOST }}
+          username: '${{ secrets.USERNAME }}'
+          server: '${{ secrets.HOST }}'
           ssh_private_key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
           local_path: './dist/*'
           remote_path: '/var/www/app'
           args: '-o ConnectTimeout=1200'
