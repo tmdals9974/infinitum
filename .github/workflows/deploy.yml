@@ -30,8 +30,8 @@ jobs:
         run: npm install
 
       # lint
-      - name: Code Lint
-        run: npm run lint
+      # - name: Code Lint
+      #  run: npm run lint
         
       # build
       - name: Vue Build
