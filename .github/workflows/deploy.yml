@@ -45,6 +45,8 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
+          timeout: 120s
+          command_timeout: 10m
           script: whoami
       
       # test1
