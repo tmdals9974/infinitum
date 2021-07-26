@@ -38,16 +38,16 @@ jobs:
         run: npm run build
         
       # ssh
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@master
+      - name: deploy file
+        uses: wlixcc/SFTP-Deploy-Action@v1.0
         with:
-          host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
+          server: ${{ secrets.HOST }}
+          ssh_private_key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          timeout: 1200s
-          command_timeout: 10m
-          script: whoami
+          local_path: './dist/*'
+          remote_path: '/var/www/app'
+          args: '-o ConnectTimeout=30'
       
       # test1
       - name: test1
