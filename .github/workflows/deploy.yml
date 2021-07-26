@@ -19,16 +19,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      # npm install
-      - name: Install Dependencies
-        run: npm install
-      # lint
-      - name: Code Lint
-        run: npm run lint
-        
-      # build
-      - name: Vue Build
-        run: npm run build
         
       # ssh
       - name: executing remote ssh commands using password
@@ -40,7 +30,10 @@ jobs:
           port: ${{ secrets.PORT }}
           timeout: 30s
           command_timeout: 10m
-          script: whoami
+          script: |
+            whoami
+            ls -al
+            pwd
 
       # test1
       - name: test1
