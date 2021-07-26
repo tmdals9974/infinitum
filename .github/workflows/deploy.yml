@@ -47,7 +47,7 @@ jobs:
           port: ${{ secrets.PORT }}
           local_path: './dist/*'
           remote_path: '/var/www/app'
-          args: '-o ConnectTimeout=30'
+          args: '-o ConnectTimeout=1200'
       
       # test1
       - name: test1
