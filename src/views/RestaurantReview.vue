@@ -177,14 +177,50 @@
 
       <!-- actions -->
       <template #[`item.actions`]="{ item }">
-        <v-icon
-          small
-          class="mr-2"
-          style="cursor: pointer"
-          @click.stop="settingReview(item)"
-        >
-          mdi-pencil
-        </v-icon>
+        <div class="d-flex">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                small
+                class="actionItem"
+                v-bind="attrs"
+                v-on="on"
+                @click.stop="settingReview(item)"
+              >
+                mdi-pencil
+              </v-icon>
+            </template>
+            <span>리뷰 작성</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                small
+                class="actionItem"
+                v-bind="attrs"
+                v-on="on"
+                @click.stop="settingReview(item)"
+              >
+                mdi-playlist-edit
+              </v-icon>
+            </template>
+            <span>가게 정보 수정</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                small
+                class="actionItem"
+                v-bind="attrs"
+                v-on="on"
+                @click.stop="settingReview(item)"
+              >
+                mdi-delete
+              </v-icon>
+            </template>
+            <span>가게 삭제</span>
+          </v-tooltip>
+        </div>
       </template>
     </v-data-table>
 
@@ -493,6 +529,14 @@ export default {
     font-size: 16px;
     font-weight: bold;
     border-bottom: solid 1px black;
+  }
+}
+
+.actionItem {
+  cursor: pointer;
+
+  &:last-child {
+    margin-right: 10px;
   }
 }
 </style>

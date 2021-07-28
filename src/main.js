@@ -14,7 +14,10 @@ Vue.config.productionTip = false;
 
 Vue.prototype.$http = axios;
 Vue.prototype.$apiUrl =
-  process.env.NODE_ENV !== "production" ? "http://localhost:5000" : "/api";
+  // process.env.NODE_ENV !== "production" ? "http://localhost:5000" : "/api";
+  process.env.NODE_ENV !== "production"
+    ? "http://ec2-13-125-226-102.ap-northeast-2.compute.amazonaws.com/api"
+    : "/api";
 Vue.prototype.$successCode = 200;
 Vue.prototype.$numberWithComma = function (x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
