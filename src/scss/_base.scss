@@ -45,3 +45,76 @@ body {
 .big-avatar {
 	font-size: 40px;
 }
+
+
+// gutter - margin
+.gut-mg-1 {
+	& > * {
+		margin-left: 2px;
+		margin-right: 2px;
+	}
+}
+
+.gut-mg-2 {
+	& > * {
+		margin-left: 4px;
+		margin-right: 4px;
+	}
+}
+
+.gut-mg-3 {
+	& > * {
+		margin-left: 6px;
+		margin-right: 6px;
+	}
+}
+
+.gut-mg-4 {
+	& > * {
+		margin-left: 8px;
+		margin-right: 8px;
+	}
+}
+
+.gut-mg-5 {
+	& > * {
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+}
+
+// gutter - padding
+.gut-pd-1 {
+	& > * {
+		padding-left: 2px;
+		padding-right: 2px;
+	}
+}
+
+.gut-pd-2 {
+	& > * {
+		padding-left: 4px;
+		padding-right: 4px;
+	}
+}
+
+.gut-pd-3 {
+	& > * {
+		padding-left: 6px;
+		padding-right: 6px;
+	}
+}
+
+.gut-pd-4 {
+	& > * {
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+}
+
+.gut-pd-5 {
+	& > * {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}

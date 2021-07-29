@@ -177,7 +177,7 @@
 
       <!-- actions -->
       <template #[`item.actions`]="{ item }">
-        <div class="d-flex">
+        <div class="d-flex gut-pd-2">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-icon
@@ -201,7 +201,7 @@
                 v-on="on"
                 @click.stop="settingReview(item)"
               >
-                mdi-playlist-edit
+                mdi-file-edit-outline
               </v-icon>
             </template>
             <span>가게 정보 수정</span>
@@ -236,96 +236,21 @@
     </div>
 
     <!-- review modal -->
-    <v-dialog v-model="revDialog" max-width="600px">
-      <v-card>
-        <v-card-title class="pa-5">
-          <span class="text-h5">리뷰 등록</span>
-        </v-card-title>
-        <v-divider></v-divider>
-
-        <v-card-text class="my-5 py-0">
-          <v-container class="px-0">
-            <v-row dense class="mb-5">
-              <v-col class="mx-3">
-                <v-text-field
-                  class="my-0"
-                  label="작성자"
-                  outlined
-                  filled
-                  disabled
-                  hide-details
-                  v-model="newReview.writer"
-                ></v-text-field>
-              </v-col>
-              <v-col class="mx-3">
-                <v-text-field
-                  label="가게"
-                  outlined
-                  filled
-                  disabled
-                  hide-details
-                  v-model="newReview.restaurants_name"
-                ></v-text-field>
-              </v-col>
-              <v-col class="mx-3">
-                <v-text-field
-                  label="별점"
-                  outlined
-                  hide-details
-                  v-model="newReview.rating"
-                  placeholder="1~5 숫자만 입력"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row dense class="mb-5">
-              <v-col class="mx-3">
-                <v-text-field
-                  label="메뉴"
-                  outlined
-                  hide-details
-                  v-model="newReview.menu"
-                ></v-text-field>
-              </v-col>
-              <v-col class="mx-3">
-                <v-text-field
-                  label="가격"
-                  outlined
-                  hide-details
-                  placeholder="숫자만 입력"
-                  v-model="newReview.price"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col class="mx-3">
-                <v-textarea
-                  label="평가"
-                  outlined
-                  hide-details
-                  v-model="newReview.reviews"
-                ></v-textarea>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions class="pb-5">
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="revDialog = false">
-            Close
-          </v-btn>
-          <v-btn color="blue darken-1" text @click="createReview()">
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <review-dialog
+      v-if="revDialog"
+      :newReview.sync="newReview"
+      :revDialog.sync="revDialog"
+      @createReview="createReview"
+    ></review-dialog>
   </div>
 </template>
 
 <script>
+import ReviewDialog from "../components/ReviewDialog.vue";
+
 export default {
   name: "restaurant-review",
+  components: { ReviewDialog },
   data() {
     return {
       search: "",
