@@ -37,66 +37,15 @@
           <v-spacer> </v-spacer>
           <v-spacer> </v-spacer>
 
-          <!-- modal button -->
           <div class="ma-2" style="width: 100px; height: 100%">
-            <v-dialog v-model="resDialog" max-width="600px">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn color="primary" block v-bind="attrs" v-on="on">
-                  추가
-                </v-btn>
-              </template>
+            <v-btn color="primary" block @click="resDialog = true">추가</v-btn>
 
-              <v-card>
-                <v-card-title class="pa-5">
-                  <span class="text-h5">식당 등록</span>
-                </v-card-title>
-                <v-divider></v-divider>
-
-                <v-card-text class="my-5 py-0">
-                  <v-container class="px-0">
-                    <v-row dense class="mb-5">
-                      <v-col class="mx-3">
-                        <v-text-field
-                          label="구분"
-                          outlined
-                          hide-details
-                          v-model="newRestaurant.type"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col class="mx-3">
-                        <v-text-field
-                          label="상호명"
-                          outlined
-                          hide-details
-                          v-model="newRestaurant.name"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                    <v-row dense>
-                      <v-col class="mx-3">
-                        <v-text-field
-                          label="위치"
-                          outlined
-                          hide-details
-                          v-model="newRestaurant.position"
-                          @keydown.enter="createRestaurant()"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-
-                <v-card-actions class="pb-5">
-                  <v-spacer></v-spacer>
-                  <v-btn color="red darken-1" text @click="resDialog = false">
-                    Close
-                  </v-btn>
-                  <v-btn color="blue darken-1" text @click="createRestaurant()">
-                    Save
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+            <restaurant-dialog
+              v-if="resDialog"
+              :newRestaurant.sync="newRestaurant"
+              :resDialog.sync="resDialog"
+              @createRestaurant="createRestaurant"
+            ></restaurant-dialog>
           </div>
         </div>
       </template>
@@ -221,6 +170,13 @@
             <span>가게 삭제</span>
           </v-tooltip>
         </div>
+
+        <review-dialog
+          v-if="revDialog"
+          :newReview.sync="newReview"
+          :revDialog.sync="revDialog"
+          @createReview="createReview"
+        ></review-dialog>
       </template>
     </v-data-table>
 
@@ -234,23 +190,16 @@
         class="pagination"
       ></v-pagination>
     </div>
-
-    <!-- review modal -->
-    <review-dialog
-      v-if="revDialog"
-      :newReview.sync="newReview"
-      :revDialog.sync="revDialog"
-      @createReview="createReview"
-    ></review-dialog>
   </div>
 </template>
 
 <script>
 import ReviewDialog from "../components/ReviewDialog.vue";
+import RestaurantDialog from "../components/RestaurantDialog.vue";
 
 export default {
   name: "restaurant-review",
-  components: { ReviewDialog },
+  components: { ReviewDialog, RestaurantDialog },
   data() {
     return {
       search: "",
