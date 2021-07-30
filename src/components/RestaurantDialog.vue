@@ -2,12 +2,12 @@
   <v-dialog
     v-model="resDialog"
     max-width="600px"
-    @click:outside="$emit('update:resDialog', $event.target.value)"
-    @keydown.esc="$emit('update:resDialog', $event.target.value)"
+    @click:outside="closeDialog()"
+    @keydown.esc="closeDialog()"
   >
     <v-card>
       <v-card-title class="pa-5">
-        <span class="text-h5">식당 등록</span>
+        <span class="text-h5">{{ dialogTitle }}</span>
       </v-card-title>
       <v-divider></v-divider>
 
@@ -47,7 +47,7 @@
                 @change="
                   $emit('update:newRestaurant.position', $event.target.value)
                 "
-                @keydown.enter="$emit('createRestaurant')"
+                @keydown.enter="saveClick()"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -56,16 +56,8 @@
 
       <v-card-actions class="pb-5">
         <v-spacer></v-spacer>
-        <v-btn
-          color="red darken-1"
-          text
-          @click="$emit('update:resDialog', $event.target.value)"
-        >
-          Close
-        </v-btn>
-        <v-btn color="blue darken-1" text @click="$emit('createRestaurant')">
-          Save
-        </v-btn>
+        <v-btn color="red darken-1" text @click="closeDialog()"> Close </v-btn>
+        <v-btn color="blue darken-1" text @click="saveClick()"> Save </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -73,7 +65,45 @@
 
 <script>
 export default {
-  props: ["newRestaurant", "resDialog"],
+  props: ["newRestaurant", "resDialog", "resDialogMode"],
+  computed: {
+    dialogTitle() {
+      switch (this.resDialogMode) {
+        case -1:
+          return "식당";
+        case 0:
+          return "식당 등록";
+        case 1:
+          return "식당 수정";
+        case 2:
+          return "식당 삭제";
+        default:
+          return "식당";
+      }
+    },
+  },
+  methods: {
+    closeDialog() {
+      this.$emit("update:resDialog", false);
+      this.$emit("resetNewRestaurant");
+    },
+    saveClick() {
+      switch (this.resDialogMode) {
+        case -1:
+          break;
+        case 0:
+          this.$emit("createRestaurant");
+          break;
+        case 1:
+          this.$emit("updateRestaurant");
+          break;
+        case 2:
+          break;
+        default:
+          break;
+      }
+    }
+  },
 };
 </script>
 

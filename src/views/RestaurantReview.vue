@@ -38,13 +38,24 @@
           <v-spacer> </v-spacer>
 
           <div class="ma-2" style="width: 100px; height: 100%">
-            <v-btn color="primary" block @click="resDialog = true">추가</v-btn>
+            <v-btn
+              color="primary"
+              block
+              @click="
+                resDialog = true;
+                resDialogMode = 0;
+              "
+              >추가</v-btn
+            >
 
             <restaurant-dialog
               v-if="resDialog"
               :newRestaurant.sync="newRestaurant"
               :resDialog.sync="resDialog"
+              :resDialogMode="resDialogMode"
               @createRestaurant="createRestaurant"
+              @updateRestaurant="updateRestaurant"
+              @resetNewRestaurant="resetNewRestaurant"
             ></restaurant-dialog>
           </div>
         </div>
@@ -148,7 +159,7 @@
                 class="actionItem"
                 v-bind="attrs"
                 v-on="on"
-                @click.stop="settingReview(item)"
+                @click.stop="settingUpdateRestaurant(item)"
               >
                 mdi-file-edit-outline
               </v-icon>
@@ -219,6 +230,7 @@ export default {
       ],
       restaurants: [],
       resDialog: false,
+      resDialogMode: -1, //-1:초기값, 0:생성, 1:수정, 2:삭제
       revDialog: false,
       newRestaurant: {},
       newReview: {},
@@ -266,12 +278,21 @@ export default {
           this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
         });
     },
+    updateRestaurant() {
+      //가게정보 수정
+    },
     resetNewRestaurant() {
       this.newRestaurant = {
         type: "",
         name: "",
         position: "",
       };
+    },
+    settingUpdateRestaurant(item) {
+      const { id, type, position, name } = item;
+      this.newRestaurant = { id, type, position, name };
+      this.resDialog = true;
+      this.resDialogMode = 1;
     },
     settingReview(item) {
       this.newReview.restaurants_id = item.id;
