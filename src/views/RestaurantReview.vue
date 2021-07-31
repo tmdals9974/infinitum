@@ -173,7 +173,10 @@
                 class="actionItem"
                 v-bind="attrs"
                 v-on="on"
-                @click.stop="settingReview(item)"
+                @click.stop="
+                  deleteTargetId = item.id;
+                  deleteDialog = true;
+                "
               >
                 mdi-delete
               </v-icon>
@@ -181,15 +184,30 @@
             <span>가게 삭제</span>
           </v-tooltip>
         </div>
-
-        <review-dialog
-          v-if="revDialog"
-          :newReview.sync="newReview"
-          :revDialog.sync="revDialog"
-          @createReview="createReview"
-        ></review-dialog>
       </template>
     </v-data-table>
+
+    <review-dialog
+      v-if="revDialog"
+      :newReview.sync="newReview"
+      :revDialog.sync="revDialog"
+      @createReview="createReview"
+    ></review-dialog>
+    <two-button-dialog
+      v-if="deleteDialog"
+      :maxWidth="'500px'"
+      :isShow.sync="deleteDialog"
+      :dialogTitle="'가게 삭제'"
+      :dialogButtonText="'Delete'"
+      @onSave="deleteRestaurant"
+    >
+      <div class="subtitle-1" style="text-align: center">
+        삭제 시 작성된 리뷰까지 같이 제거되며 이후 복구가 불가능합니다.
+        <br />
+        <br />
+        정말 삭제하시겠습니까?
+      </div>
+    </two-button-dialog>
 
     <!-- pagination -->
     <div class="text-center pt-3 pr-3 card-padding d-flex justify-end">
@@ -207,10 +225,15 @@
 <script>
 import ReviewDialog from "../components/ReviewDialog.vue";
 import RestaurantDialog from "../components/RestaurantDialog.vue";
+import TwoButtonDialog from "../components/TwoButtonDialog.vue";
 
 export default {
   name: "restaurant-review",
-  components: { ReviewDialog, RestaurantDialog },
+  components: {
+    ReviewDialog,
+    RestaurantDialog,
+    TwoButtonDialog,
+  },
   data() {
     return {
       search: "",
@@ -234,6 +257,8 @@ export default {
       revDialog: false,
       newRestaurant: {},
       newReview: {},
+      deleteDialog: false,
+      deleteTargetId: "",
     };
   },
   created: function () {
@@ -405,6 +430,30 @@ export default {
         item.name,
         menus,
       ]).includes(search);
+    },
+    deleteRestaurant() {
+      this.$http
+        .delete(`${this.$apiUrl}/restaurant`, {
+          data: { id: this.deleteTargetId },
+        })
+        .then((res) => {
+          if (res.data[0].statusCode === this.$successCode) {
+            const index = this.restaurants.findIndex(
+              (r) => r.id === this.deleteTargetId
+            );
+            if (index === -1) throw "가게 삭제 중 오류가 발생하였습니다.";
+
+            this.restaurants.splice(index, 1);
+          } else {
+            this.$toast.error(
+              `${res.data[0].message}`,
+              this.$defaultToastOption
+            );
+          }
+        })
+        .catch((err) => {
+          this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
+        });
     },
     getItemId(item) {
       return item.id;
