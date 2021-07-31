@@ -102,7 +102,7 @@ export default {
         default:
           break;
       }
-    }
+    },
   },
 };
 </script>

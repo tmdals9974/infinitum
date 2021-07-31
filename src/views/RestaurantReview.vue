@@ -279,7 +279,37 @@ export default {
         });
     },
     updateRestaurant() {
-      //가게정보 수정
+      if (!Object.values(this.newRestaurant).every((v) => v))
+        return this.$toast.warning(
+          "모든 값을 입력해주세요.",
+          this.$defaultToastOption
+        );
+
+      this.$http
+        .put(`${this.$apiUrl}/restaurant`, this.newRestaurant)
+        .then((res) => {
+          if (res.data[0].statusCode === this.$successCode) {
+            const index = this.restaurants.findIndex(
+              (r) => r.id === this.newRestaurant.id
+            );
+            if (index === -1) throw "가게 수정 중 오류가 발생하였습니다.";
+
+            const res = this.restaurants[index];
+            res.type = this.newRestaurant.type;
+            res.position = this.newRestaurant.position;
+            res.name = this.newRestaurant.name;
+            this.resDialog = false;
+            this.resetNewRestaurant();
+          } else {
+            this.$toast.error(
+              `${res.data[0].message}`,
+              this.$defaultToastOption
+            );
+          }
+        })
+        .catch((err) => {
+          this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
+        });
     },
     resetNewRestaurant() {
       this.newRestaurant = {
