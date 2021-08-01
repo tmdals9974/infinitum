@@ -398,6 +398,30 @@ export default {
           this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
         });
     },
+    deleteRestaurant() {
+      this.$http
+        .delete(`${this.$apiUrl}/restaurant`, {
+          data: { id: this.deleteTargetId },
+        })
+        .then((res) => {
+          if (res.data[0].statusCode === this.$successCode) {
+            const index = this.restaurants.findIndex(
+              (r) => r.id === this.deleteTargetId
+            );
+            if (index === -1) throw "가게 삭제 중 오류가 발생하였습니다.";
+
+            this.restaurants.splice(index, 1);
+          } else {
+            this.$toast.error(
+              `${res.data[0].message}`,
+              this.$defaultToastOption
+            );
+          }
+        })
+        .catch((err) => {
+          this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
+        });
+    },
     resetNewRestaurant() {
       this.newRestaurant = {
         type: "",
@@ -492,7 +516,34 @@ export default {
       alert("updateReview");
     },
     deleteReview() {
-      alert("deleteReview");
+      this.$http
+        .delete(`${this.$apiUrl}/review`, {
+          data: { id: this.deleteTargetId },
+        })
+        .then((res) => {
+          if (res.data[0].statusCode === this.$successCode) {
+            const index = this.restaurants.findIndex(
+              (r) =>
+                r.reviews.findIndex((re) => re.id === this.deleteTargetId) != -1
+            );
+            if (index === -1) throw "리뷰 삭제 중 오류가 발생하였습니다.";
+
+            const res = this.restaurants[index];
+
+            const reviewIndex = res.reviews.findIndex(
+              (r) => r.id === this.deleteTargetId
+            );
+            res.reviews.splice(reviewIndex, 1);
+          } else {
+            this.$toast.error(
+              `${res.data[0].message}`,
+              this.$defaultToastOption
+            );
+          }
+        })
+        .catch((err) => {
+          this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
+        });
     },
     resetNewReview() {
       this.newReview = {
@@ -520,30 +571,6 @@ export default {
         item.name,
         menus,
       ]).includes(search);
-    },
-    deleteRestaurant() {
-      this.$http
-        .delete(`${this.$apiUrl}/restaurant`, {
-          data: { id: this.deleteTargetId },
-        })
-        .then((res) => {
-          if (res.data[0].statusCode === this.$successCode) {
-            const index = this.restaurants.findIndex(
-              (r) => r.id === this.deleteTargetId
-            );
-            if (index === -1) throw "가게 삭제 중 오류가 발생하였습니다.";
-
-            this.restaurants.splice(index, 1);
-          } else {
-            this.$toast.error(
-              `${res.data[0].message}`,
-              this.$defaultToastOption
-            );
-          }
-        })
-        .catch((err) => {
-          this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
-        });
     },
     getItemId(item) {
       return item.id;
