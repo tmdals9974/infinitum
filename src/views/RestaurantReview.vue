@@ -147,7 +147,7 @@
                           v-on="on"
                           @click.stop="
                             deleteTargetId = review.id;
-                            deleteDialog = true;
+                            revDeleteDialog = true;
                           "
                         >
                           mdi-delete
@@ -211,7 +211,7 @@
                 v-on="on"
                 @click.stop="
                   deleteTargetId = item.id;
-                  deleteDialog = true;
+                  resDeleteDialog = true;
                 "
               >
                 mdi-delete
@@ -233,16 +233,34 @@
       @resetNewReview="resetNewReview"
     ></review-dialog>
 
+    <!-- 가게 삭제 -->
     <two-button-dialog
-      v-if="deleteDialog"
+      v-if="resDeleteDialog"
       :maxWidth="'500px'"
-      :isShow.sync="deleteDialog"
+      :isShow.sync="resDeleteDialog"
       :dialogTitle="'가게 삭제'"
       :dialogButtonText="'Delete'"
       @onSave="deleteRestaurant"
     >
       <div class="subtitle-1" style="text-align: center">
         삭제 시 작성된 리뷰까지 같이 제거되며 이후 복구가 불가능합니다.
+        <br />
+        <br />
+        정말 삭제하시겠습니까?
+      </div>
+    </two-button-dialog>
+
+    <!-- 리뷰 삭제 -->
+    <two-button-dialog
+      v-if="revDeleteDialog"
+      :maxWidth="'500px'"
+      :isShow.sync="revDeleteDialog"
+      :dialogTitle="'리뷰 삭제'"
+      :dialogButtonText="'Delete'"
+      @onSave="deleteReview"
+    >
+      <div class="subtitle-1 w-full" style="text-align: center">
+        삭제 후 복구가 불가능합니다.
         <br />
         <br />
         정말 삭제하시겠습니까?
@@ -292,14 +310,17 @@ export default {
         { text: "", value: "actions", sortable: false, width: "50px" },
       ],
       restaurants: [],
+      deleteTargetId: "",
+      //가게 관리
       resDialog: false,
       resDialogMode: -1, //-1:초기값, 0:생성, 1:수정
+      newRestaurant: {},
+      resDeleteDialog: false,
+      //리뷰 관리
       revDialog: false,
       revDialogMode: -1, //-1:초기값, 0:생성, 1:수정
-      newRestaurant: {},
       newReview: {},
-      deleteDialog: false,
-      deleteTargetId: "",
+      revDeleteDialog: false,
     };
   },
   created: function () {
@@ -469,6 +490,9 @@ export default {
     },
     updateReview() {
       alert("updateReview");
+    },
+    deleteReview() {
+      alert("deleteReview");
     },
     resetNewReview() {
       this.newReview = {
