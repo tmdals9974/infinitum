@@ -513,7 +513,41 @@ export default {
         });
     },
     updateReview() {
-      alert("updateReview");
+      if (!Object.values(this.newReview).every((v) => v))
+        return this.$toast.warning(
+          "모든 값을 입력해주세요.",
+          this.$defaultToastOption
+        );
+
+      this.$http
+        .put(`${this.$apiUrl}/review`, this.newReview)
+        .then((res) => {
+          if (res.data[0].statusCode === this.$successCode) {
+            const index = this.restaurants.findIndex(
+              (r) =>
+                r.reviews.findIndex((re) => re.id === this.newReview.id) != -1
+            );
+            if (index === -1) throw "리뷰 수정 중 오류가 발생하였습니다.";
+
+            const res = this.restaurants[index];
+            const reviewIndex = res.reviews.findIndex(
+              (r) => r.id === this.newReview.id
+            );
+            // const review = res.reviews[reviewIndex];
+            res.reviews[reviewIndex] = { ...this.newReview };
+
+            this.revDialog = false;
+            this.resetNewReview();
+          } else {
+            this.$toast.error(
+              `${res.data[0].message}`,
+              this.$defaultToastOption
+            );
+          }
+        })
+        .catch((err) => {
+          this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
+        });
     },
     deleteReview() {
       this.$http
