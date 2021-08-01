@@ -81,7 +81,8 @@
                 <v-col cols="2">메뉴</v-col>
                 <v-col cols="1">가격</v-col>
                 <v-col cols="1">별점</v-col>
-                <v-col cols="6">평가</v-col>
+                <v-col cols="5">평가</v-col>
+                <v-col cols="1"></v-col>
               </v-row>
               <v-row
                 class="px-5 py-3 sub-table-tr"
@@ -118,8 +119,43 @@
                 <v-col class="align-self-center" cols="1">
                   {{ review.rating }}
                 </v-col>
-                <v-col class="align-self-center" cols="6">
+                <v-col class="align-self-center" cols="5">
                   {{ review.reviews }}
+                </v-col>
+                <v-col class="align-self-center" cols="1">
+                  <div class="d-flex gut-pd-2">
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon
+                          small
+                          class="actionItem"
+                          v-bind="attrs"
+                          v-on="on"
+                          @click.stop="settingUpdateRestaurant(item)"
+                        >
+                          mdi-file-edit-outline
+                        </v-icon>
+                      </template>
+                      <span>리뷰 수정</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-icon
+                          small
+                          class="actionItem"
+                          v-bind="attrs"
+                          v-on="on"
+                          @click.stop="
+                            deleteTargetId = item.id;
+                            deleteDialog = true;
+                          "
+                        >
+                          mdi-delete
+                        </v-icon>
+                      </template>
+                      <span>리뷰 삭제</span>
+                    </v-tooltip>
+                  </div>
                 </v-col>
               </v-row>
             </div>
