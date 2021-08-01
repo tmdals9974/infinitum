@@ -2,12 +2,12 @@
   <v-dialog
     v-model="revDialog"
     max-width="600px"
-    @click:outside="$emit('update:revDialog', $event.target.value)"
-    @keydown.esc="$emit('update:revDialog', $event.target.value)"
+    @click:outside="closeDialog()"
+    @keydown.esc="closeDialog()"
   >
     <v-card>
       <v-card-title class="pa-5">
-        <span class="text-h5">리뷰 등록</span>
+        <span class="text-h5">{{ dialogTitle }}</span>
       </v-card-title>
       <v-divider></v-divider>
 
@@ -33,12 +33,9 @@
                 filled
                 disabled
                 hide-details
-                v-model="newReview.restaurants_name"
+                v-model="newReview.restaurant_name"
                 @change="
-                  $emit(
-                    'update:newReview.restaurants_name',
-                    $event.target.value
-                  )
+                  $emit('update:newReview.restaurant_name', $event.target.value)
                 "
               ></v-text-field>
             </v-col>
@@ -82,6 +79,7 @@
                 hide-details
                 v-model="newReview.reviews"
                 @change="$emit('update:newReview.reviews', $event.target.value)"
+                @keydown.enter="saveClick()"
               ></v-textarea>
             </v-col>
           </v-row>
@@ -90,16 +88,8 @@
 
       <v-card-actions class="pb-5">
         <v-spacer></v-spacer>
-        <v-btn
-          color="red darken-1"
-          text
-          @click="$emit('update:revDialog', $event.target.value)"
-        >
-          Close
-        </v-btn>
-        <v-btn color="blue darken-1" text @click="$emit('createReview')">
-          Save
-        </v-btn>
+        <v-btn color="red darken-1" text @click="closeDialog()"> Close </v-btn>
+        <v-btn color="blue darken-1" text @click="saveClick()"> Save </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -107,7 +97,37 @@
 
 <script>
 export default {
-  props: ["newReview", "revDialog"],
+  props: ["newReview", "revDialog", "revDialogMode"],
+  computed: {
+    dialogTitle() {
+      switch (this.revDialogMode) {
+        case 0:
+          return "리뷰 등록";
+        case 1:
+          return "리뷰 수정";
+        default:
+          return "리뷰";
+      }
+    },
+  },
+  methods: {
+    closeDialog() {
+      this.$emit("update:revDialog", false);
+      this.$emit("resetNewReview");
+    },
+    saveClick() {
+      switch (this.revDialogMode) {
+        case 0:
+          this.$emit("createReview");
+          break;
+        case 1:
+          this.$emit("updateReview");
+          break;
+        default:
+          break;
+      }
+    },
+  },
 };
 </script>
 

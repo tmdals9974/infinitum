@@ -131,7 +131,7 @@
                           class="actionItem"
                           v-bind="attrs"
                           v-on="on"
-                          @click.stop="settingUpdateRestaurant(item)"
+                          @click.stop="settingUpdateReview(review)"
                         >
                           mdi-file-edit-outline
                         </v-icon>
@@ -146,7 +146,7 @@
                           v-bind="attrs"
                           v-on="on"
                           @click.stop="
-                            deleteTargetId = item.id;
+                            deleteTargetId = review.id;
                             deleteDialog = true;
                           "
                         >
@@ -227,8 +227,12 @@
       v-if="revDialog"
       :newReview.sync="newReview"
       :revDialog.sync="revDialog"
+      :revDialogMode="revDialogMode"
       @createReview="createReview"
+      @updateReview="updateReview"
+      @resetNewReview="resetNewReview"
     ></review-dialog>
+
     <two-button-dialog
       v-if="deleteDialog"
       :maxWidth="'500px'"
@@ -289,8 +293,9 @@ export default {
       ],
       restaurants: [],
       resDialog: false,
-      resDialogMode: -1, //-1:초기값, 0:생성, 1:수정, 2:삭제
+      resDialogMode: -1, //-1:초기값, 0:생성, 1:수정
       revDialog: false,
+      revDialogMode: -1, //-1:초기값, 0:생성, 1:수정
       newRestaurant: {},
       newReview: {},
       deleteDialog: false,
@@ -386,8 +391,30 @@ export default {
       this.resDialogMode = 1;
     },
     settingReview(item) {
-      this.newReview.restaurants_id = item.id;
-      this.newReview.restaurants_name = item.name;
+      this.newReview.restaurant_id = item.id;
+      this.newReview.restaurant_name = item.name;
+      this.revDialogMode = 0;
+      this.revDialog = true;
+    },
+    settingUpdateReview(item) {
+      console.log(JSON.stringify(item));
+      const index = this.restaurants.findIndex(
+        (r) => r.id === item.restaurant_id
+      );
+      const restaurant_name = this.restaurants[index].name;
+      const { id, writer, restaurant_id, reviews, rating, menu, price } = item;
+      this.newReview = {
+        id,
+        writer,
+        restaurant_id,
+        restaurant_name,
+        reviews,
+        rating,
+        menu,
+        price,
+      };
+
+      this.revDialogMode = 1;
       this.revDialog = true;
     },
     createReview() {
@@ -404,7 +431,7 @@ export default {
             this.newReview.id = res.data[1].insertId;
 
             const index = this.restaurants.findIndex(
-              (r) => r.id === this.newReview.restaurants_id
+              (r) => r.id === this.newReview.restaurant_id
             );
             if (index === -1) throw "리뷰 작성 중 오류가 발생하였습니다.";
 
@@ -440,13 +467,16 @@ export default {
           this.$toast.error(`오류 발생\r\n${err}`, this.$defaultToastOption);
         });
     },
+    updateReview() {
+      alert("updateReview");
+    },
     resetNewReview() {
       this.newReview = {
         writer: this.$store.state.userName,
         menu: "",
         reviews: "",
-        restaurants_id: "",
-        restaurants_name: "",
+        restaurant_id: "",
+        restaurant_name: "",
         rating: undefined,
         price: undefined,
       };

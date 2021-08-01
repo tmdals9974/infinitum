@@ -69,14 +69,10 @@ export default {
   computed: {
     dialogTitle() {
       switch (this.resDialogMode) {
-        case -1:
-          return "식당";
         case 0:
           return "식당 등록";
         case 1:
           return "식당 수정";
-        case 2:
-          return "식당 삭제";
         default:
           return "식당";
       }
@@ -89,15 +85,11 @@ export default {
     },
     saveClick() {
       switch (this.resDialogMode) {
-        case -1:
-          break;
         case 0:
           this.$emit("createRestaurant");
           break;
         case 1:
           this.$emit("updateRestaurant");
-          break;
-        case 2:
           break;
         default:
           break;
