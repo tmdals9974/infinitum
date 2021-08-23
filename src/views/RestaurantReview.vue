@@ -171,6 +171,17 @@
         </td>
       </template>
 
+      <!-- position -->
+      <template #[`item.position`]="{ item }">
+        <a
+          v-if="item.map"
+          :href="item.map"
+          target="_blank"
+          :title="item.name"
+          >{{ item.position }}</a
+        >
+        <span v-else>{{ item.position }}</span>
+      </template>
       <!-- actions -->
       <template #[`item.actions`]="{ item }">
         <div class="d-flex gut-pd-2">
@@ -385,6 +396,7 @@ export default {
             res.type = this.newRestaurant.type;
             res.position = this.newRestaurant.position;
             res.name = this.newRestaurant.name;
+            res.map = this.newRestaurant.map;
             this.resDialog = false;
             this.resetNewRestaurant();
           } else {
@@ -427,11 +439,12 @@ export default {
         type: "",
         name: "",
         position: "",
+        map: "",
       };
     },
     settingUpdateRestaurant(item) {
-      const { id, type, position, name } = item;
-      this.newRestaurant = { id, type, position, name };
+      const { id, type, position, name, map } = item;
+      this.newRestaurant = { id, type, position, name, map };
       this.resDialog = true;
       this.resDialogMode = 1;
     },
@@ -442,7 +455,6 @@ export default {
       this.revDialog = true;
     },
     settingUpdateReview(item) {
-      console.log(JSON.stringify(item));
       const index = this.restaurants.findIndex(
         (r) => r.id === item.restaurant_id
       );

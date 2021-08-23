@@ -38,6 +38,18 @@
             </v-col>
           </v-row>
           <v-row dense>
+            <v-col class="mx-3 mb-5">
+              <v-text-field
+                label="URL"
+                outlined
+                hide-details
+                v-model="newRestaurant.map"
+                @change="$emit('update:newRestaurant.map', $event.target.value)"
+                @keydown.enter="saveClick()"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row dense>
             <v-col class="mx-3">
               <v-text-field
                 label="위치"
