@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-toolbar flat color="white">
-      <v-toolbar-title>오늘 뭐먹지?</v-toolbar-title>
+      <v-toolbar-title>오늘 뭐먹지? 자동배포</v-toolbar-title>
     </v-toolbar>
 
     <!-- table -->

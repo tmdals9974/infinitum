@@ -1,8 +1,8 @@
 name: Deploy
 
 on:
-  # push:
-  #   branches: [ master ]
+  push:
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -14,17 +14,26 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: mkdir
-        run: mkdir testdir1
+      # npm install
+      - name: Install Dependencies
+        run: npm install
 
-      # # npm install
-      # - name: Install Dependencies
-      #   run: npm install
-
-      # # lint
-      # - name: Code Lint
-      #   run: npm run lint
+      # lint
+      - name: Code Lint
+        run: npm run lint
         
-      # # build
-      # - name: Vue Build
-      #   run: npm run build
+      # build
+      - name: Vue Build
+        run: npm run build
+      
+      # backup
+      - name: Backup
+        run: mv /usr/share/nginx/html/dist /usr/share/nginx/html/dist_$(date '+%Y%m%d')
+
+      # deploy
+      - name: deploy
+        run: mv ./dist /usr/share/nginx/html/dist
+
+      # remove dependencies
+      - name: Remove Dependencies
+        run: rm -rf *
