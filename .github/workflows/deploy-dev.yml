@@ -1,0 +1,43 @@
+name: Deploy Dev
+
+on:
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: [self-hosted, deploy-actions-dev]
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # test
+      - name: deploy dev pwd check
+        run: pwd
+        
+      # # npm install
+      # - name: Install Dependencies
+      #   run: npm install
+
+      # # lint
+      # - name: Code Lint
+      #   run: npm run lint
+        
+      # # build
+      # - name: Vue Build
+      #   run: npm run build
+      
+      # # backup
+      # - name: Backup
+      #   run: mv /usr/share/nginx/html/dist /usr/share/nginx/html/dist_$(date '+%Y%m%d')
+
+      # # deploy
+      # - name: deploy
+      #   run: mv ./dist /usr/share/nginx/html/dist
+
+      # # remove dependencies
+      # - name: Remove Dependencies
+      #   run: rm -rf *
