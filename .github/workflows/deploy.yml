@@ -1,38 +1,30 @@
 name: Deploy
 
 on:
-  push:
-    branches: [ master ]
+  # push:
+  #   branches: [ master ]
   workflow_dispatch:
 
 jobs:
 
   build:
-    runs-on: ubuntu-20.04
+    runs-on: [self-hosted, deploy-actions]
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # npm install
-      - name: Install Dependencies
-        run: npm install
+      - name: mkdir
+        run: mkdir testdir1
 
-      # lint
-      - name: Code Lint
-        run: npm run lint
+      # # npm install
+      # - name: Install Dependencies
+      #   run: npm install
+
+      # # lint
+      # - name: Code Lint
+      #   run: npm run lint
         
-      # build
-      - name: Vue Build
-        run: npm run build
-        
-      # ssh
-      - name: deploy file
-        uses: wlixcc/SFTP-Deploy-Action@v1.0
-        with:
-          username: '${{ secrets.USERNAME }}'
-          server: '${{ secrets.HOST }}'
-          ssh_private_key: ${{ secrets.KEY }}
-          local_path: './dist/*'
-          remote_path: '/usr/share/nginx/html/dist/'
-          args: '-o ConnectTimeout=30'
+      # # build
+      # - name: Vue Build
+      #   run: npm run build
